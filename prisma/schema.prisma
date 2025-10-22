@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+// generator seed {
+//   provider = "tsx"
+//   output   = "../src/lib/seed.ts"
+// }
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String   // "owner" | "agent"
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  properties Property[]
+  
+  @@map("users")
+}
+
+model Property {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String
+  price        Float
+  currency     String   @default("SAR")
+  type         String   // "apartment","villa","land","shop"
+  status       String   // "sale", "rent"
+  city         String
+  district     String?
+  address      String?
+  areaSqm      Float?
+  bedrooms     Int?
+  bathrooms    Int?
+  features     String   // JSON string for features array
+  published    Boolean  @default(false)
+  listedAt     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  latitude     Float?
+  longitude    Float?
+  
+  // Relations
+  agentId      String?
+  agent        User?    @relation(fields: [agentId], references: [id])
+  images       Image[]
+  
+  @@map("properties")
+}
+
+model Image {
+  id         String  @id @default(cuid())
+  url        String
+  alt        String?
+  propertyId String
+  order      Int     @default(0)
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@map("images")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  propertyId String?
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+  
+  @@map("contact_messages")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String   // "create", "update", "delete"
+  entity    String   // "property", "user", etc.
+  entityId  String
+  changes   String?  // JSON string of changes
+  createdAt DateTime @default(now())
+  
+  @@map("audit_logs")
+}
