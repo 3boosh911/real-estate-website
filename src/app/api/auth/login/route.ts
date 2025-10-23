@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     const token = generateToken(user)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
@@ -33,6 +33,18 @@ export async function POST(request: NextRequest) {
       },
       token,
     })
+
+    response.cookies.set({
+      name: 'token',
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 أيام
+      sameSite: 'lax',
+    })
+
+    return response
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(

@@ -9,10 +9,10 @@ async function main() {
   // إنشاء المستخدم الرئيسي
   const ownerPassword = await bcrypt.hash('admin123', 10)
   const owner = await prisma.user.upsert({
-    where: { email: 'admin@realstate.com' },
+    where: { email: 'admin@realestate-sa.com' },
     update: {},
     create: {
-      email: 'admin@realstate.com',
+      email: 'admin@realestate-sa.com',
       name: 'مدير المكتب',
       role: 'owner',
       password: ownerPassword,
