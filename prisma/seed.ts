@@ -7,12 +7,12 @@ async function main() {
   console.log('🌱 بدء إدراج البيانات التجريبية...')
 
   // إنشاء المستخدم الرئيسي
-  const ownerPassword = await bcrypt.hash('admin123', 10)
+  const ownerPassword = await bcrypt.hash('admin123', 12)
   const owner = await prisma.user.upsert({
-    where: { email: 'admin@realestate-sa.com' },
-    update: {},
+    where: { email: 'admin@realstate.com' },
+    update: { password: ownerPassword },
     create: {
-      email: 'admin@realestate-sa.com',
+      email: 'admin@realstate.com',
       name: 'مدير المكتب',
       role: 'owner',
       password: ownerPassword,
@@ -20,10 +20,10 @@ async function main() {
   })
 
   // إنشاء وكيل
-  const agentPassword = await bcrypt.hash('agent123', 10)
+  const agentPassword = await bcrypt.hash('agent123', 12)
   const agent = await prisma.user.upsert({
     where: { email: 'agent@realestate-sa.com' },
-    update: {},
+    update: { password: agentPassword },
     create: {
       email: 'agent@realestate-sa.com',
       name: 'أحمد محمد',
